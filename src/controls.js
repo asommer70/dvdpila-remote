@@ -3,6 +3,14 @@ import ControlButton from './components/control_button';
 import Button from './components/button';
 
 class Controls extends Component {
+  constructor(props) {
+    super(props);
+    this.props = props;
+  }
+
+  settings() {
+    this.props.navigator.push({name: 'settings'});
+  }
 
   render() {
     return (
@@ -18,7 +26,7 @@ class Controls extends Component {
         </View>
 
         <View style={styles.divider} />
-        <Button text={'Settings'} src={require('./img/gear-white-icon.png')} />
+        <Button text={'Settings'} src={require('./img/gear-white-icon.png')} onPress={this.settings.bind(this)} />
       </View>
     );
   }

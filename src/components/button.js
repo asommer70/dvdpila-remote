@@ -9,15 +9,28 @@ var {
 
 module.exports = React.createClass({
   render: function() {
+    var image, text;
+    if (this.props.src) {
+      image = <Image source={this.props.src} style={[styles.image, this.props.imageStyle]} />;
+    } else {
+      image = <View/>;
+    }
+
+    if (this.props.text) {
+      text = <Text style={[styles.buttonText, this.props.textStyle]}>{this.props.text}</Text>;
+    } else {
+      text = <View/>;
+    }
+
     return (
       <TouchableHighlight
         style={[styles.button, this.props.buttonStyle]}
         underlayColor={'#eeeeee'}
         onPress={this.props.onPress}
         >
-        <View>
-          <Image source={this.props.src} style={styles.image} />
-          <Text style={[styles.buttonText, this.props.textStyle]}>{this.props.text}</Text>
+        <View style={this.props.viewStyle}>
+          {image}
+          {text}
         </View>
       </TouchableHighlight>
     );
