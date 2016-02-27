@@ -10,7 +10,7 @@ class Controls extends Component {
     super(props);
     this.props = props;
 
-    this.state = {settings: {host: ''}, dispatcher: {}};
+    this.state = {settings: {host: ''}, dispatcher: {}, status: 'stop'};
 
     store.get('settings').then((data) => {
       if (data === null) {
@@ -42,7 +42,7 @@ class Controls extends Component {
         }
         return false;
       })
-      this.setState({playing: playing, dvd: dvd[0]});
+      this.setState({playing: playing, dvd: dvd[0], status: playing.status});
     });
 
     this.state.dispatcher.bind('pause_success', (playing) => {
@@ -54,15 +54,26 @@ class Controls extends Component {
     this.props.navigator.push({name: 'settings'});
   }
 
-  play() {
-    console.log('sending remote_play... dvd:', this.state.dvd);
-    // this.state.socket.send('play');
-    // var socket = new WebSocketRails('localhost:3000/websocket');
-    this.state.dispatcher.trigger('remote_play', {id: this.state.dvd.id, type: 'dvd'});
+  changePlay() {
+    if (this.state.status != 'play') {
+      this.state.dispatcher.trigger('remote_play', {id: this.state.dvd.id, type: 'dvd'});
+      this.setState({status: 'play'});
+    } else {
+      this.state.dispatcher.trigger('remote_pause', {id: this.state.dvd.id, type: 'dvd'});
+      this.setState({status: 'pause'});
+    }
+  }
+
+  previous() {
+    this.state.dispatcher.trigger('remote_previous', {id: this.state.dvd.id, type: 'dvd'});
+  }
+
+  advance() {
+    this.state.dispatcher.trigger('remote_advance', {id: this.state.dvd.id, type: 'dvd'});
   }
 
   render() {
-    var title, dvdImage;
+    var title, dvdImage, playControl;
     if (this.state.dvd) {
       console.log('this.state.dvd:', this.state.dvd);
       // console.log('image_web_url:', 'http://' + this.state.settings.host + this.state.dvd.image_web_url)
@@ -71,6 +82,12 @@ class Controls extends Component {
     } else {
       title = <Text style={styles.dvdTitle}>No DVD Playing...</Text>;
       dvdImage = <View/>;
+    }
+
+    if (this.state.status == 'stop' || this.state.status == 'pause') {
+      playControl = <ControlButton src={require('./img/play-white-icon.png')} onPress={this.changePlay.bind(this)} />;
+    } else {
+      playControl = <ControlButton src={require('./img/pause-white-icon.png')} onPress={this.changePlay.bind(this)} />;
     }
 
     return (
@@ -82,11 +99,11 @@ class Controls extends Component {
         </View>
 
         <View style={styles.buttons}>
-          <ControlButton src={require('./img/previous-white-icon.png')} buttonStyle={styles.smallerButton} />
+          <ControlButton src={require('./img/previous-white-icon.png')} buttonStyle={styles.smallerButton} onPress={this.previous.bind(this)} />
 
-          <ControlButton src={require('./img/play-white-icon.png')} onPress={this.play.bind(this)} />
+          {playControl}
 
-          <ControlButton src={require('./img/next-white-icon.png')} buttonStyle={styles.smallerButton} />
+          <ControlButton src={require('./img/next-white-icon.png')} buttonStyle={styles.smallerButton} onPress={this.advance.bind(this)} />
         </View>
 
         <View style={styles.divider} />
