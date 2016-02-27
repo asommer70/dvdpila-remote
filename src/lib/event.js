@@ -3,11 +3,8 @@
 The Event object stores all the relevant event information.
  */
 
-// (function() {
-//   WebSocketRails.Event = (function() {
 class Event {
   constructor(data, success_callback, failure_callback) {
-    // console.log('Event constructor data:', data);
     var attr;
     this.success_callback = success_callback;
     this.failure_callback = failure_callback;
@@ -61,13 +58,6 @@ class Event {
       return typeof this.failure_callback === "function" ? this.failure_callback(this.result) : void 0;
     }
   }
-
-//   return Event;
-//
-// })();
-//
-// }).call(this);
-
 }
 
 export default Event;

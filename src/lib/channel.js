@@ -12,39 +12,40 @@ For instance:
 import Event from './event';
 
 class Channel {
-  constructor() {
-      var event, event_name, ref;
-      this.name = name;
-      this._dispatcher = _dispatcher;
-      this.is_private = is_private != null ? is_private : false;
-      this.on_success = on_success;
-      this.on_failure = on_failure;
-      // this._failure_launcher = bind(this._failure_launcher, this);
-      // this._success_launcher = bind(this._success_launcher, this);
-      this._callbacks = {};
-      this._token = void 0;
-      this._queue = [];
-      if (this.is_private) {
-        event_name = 'websocket_rails.subscribe_private';
-      } else {
-        event_name = 'websocket_rails.subscribe';
-      }
-      this.connection_id = (ref = this._dispatcher._conn) != null ? ref.connection_id : void 0;
-      event = Event([
-        event_name, {
-          data: {
-            channel: this.name
-          }
-        }, this.connection_id
-      ], this._success_launcher, this._failure_launcher);
-      this._dispatcher.trigger_event(event);
+  constructor(name, _dispatcher, is_private, on_success, on_failure) {
+    console.log('name:', name, '_dispatcher:', _dispatcher);
+    var event, event_name, ref;
+    this.name = name;
+    this._dispatcher = _dispatcher;
+    this.is_private = is_private != null ? is_private : false;
+    this.on_success = on_success;
+    this.on_failure = on_failure;
+    // this._failure_launcher = bind(this._failure_launcher, this);
+    // this._success_launcher = bind(this._success_launcher, this);
+    this._callbacks = {};
+    this._token = void 0;
+    this._queue = [];
+    if (this.is_private) {
+      event_name = 'websocket_rails.subscribe_private';
+    } else {
+      event_name = 'websocket_rails.subscribe';
+    }
+    this.connection_id = (ref = this._dispatcher._conn) != null ? ref.connection_id : void 0;
+    event = new Event([
+      event_name, {
+        data: {
+          channel: this.name
+        }
+      }, this.connection_id
+    ], this._success_launcher, this._failure_launcher);
+    this._dispatcher.trigger_event(event);
   }
 
   destroy = function() {
     var event, event_name, ref;
     if (this.connection_id === ((ref = this._dispatcher._conn) != null ? ref.connection_id : void 0)) {
       event_name = 'websocket_rails.unsubscribe';
-      event = new WebSocketRails.Event([
+      event = new Event([
         event_name, {
           data: {
             channel: this.name
@@ -66,7 +67,7 @@ class Channel {
 
   trigger(event_name, message) {
     var event;
-    event = new WebSocketRails.Event([
+    event = new Event([
       event_name, {
         channel: this.name,
         data: message,

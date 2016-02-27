@@ -26,6 +26,16 @@ class Controls extends Component {
     });
   }
 
+  findDvd(playing) {
+    var dvd = this.state.dvds.map((dvd, index) => {
+      if (dvd.id == playing.dvd_id) {
+        return dvd;
+      }
+      return false;
+    })
+    return dvd[0];
+  }
+
   listen() {
     this.state.dispatcher.bind('dvds', (dvds) => {
       // console.log('dispatcher.bind callback...');
@@ -36,17 +46,31 @@ class Controls extends Component {
     this.state.dispatcher.bind('now_playing', (playing) => {
       console.log('playing:', playing);
 
-      var dvd = this.state.dvds.map((dvd, index) => {
-        if (dvd.id == playing.dvd_id) {
-          return dvd;
-        }
-        return false;
-      })
-      this.setState({playing: playing, dvd: dvd[0], status: playing.status});
+      var dvd = this.findDvd(playing);
+      this.setState({playing: playing, dvd: dvd, status: playing.status});
     });
 
     this.state.dispatcher.bind('pause_success', (playing) => {
       console.log('paused_success from server...');
+    });
+
+    var channel = this.state.dispatcher.subscribe('browser');
+    channel.bind('play_now', (playing) => {
+      console.log('channel bind playing:', playing);
+      var dvd = this.findDvd(playing);
+      this.setState({playing: playing, dvd: dvd, status: playing.status});
+    });
+
+    channel.bind('pause_now', (playing) => {
+      console.log('channel bind playing:', playing);
+      var dvd = this.findDvd(playing);
+      this.setState({playing: playing, dvd: dvd, status: playing.status});
+    });
+
+    channel.bind('stop_now', (playing) => {
+      console.log('channel bind playing:', playing);
+      var dvd = this.findDvd(playing);
+      this.setState({playing: playing, dvd: dvd, status: playing.status});
     });
   }
 
@@ -95,7 +119,9 @@ class Controls extends Component {
         <Text style={styles.title}>DVD Pila! Remote</Text>
         <View style={styles.dvd}>
           {title}
-          {dvdImage}
+          <View style={styles.imageWrapper}>
+            {dvdImage}
+          </View>
         </View>
 
         <View style={styles.buttons}>
@@ -155,13 +181,18 @@ const styles = StyleSheet.create({
 
   dvdTitle: {
     fontSize: 22,
-    color: 'white',
+    color: '#ECECD1',
     marginRight: 30
   },
 
   dvdImage: {
     width: 125,
     height: 175
+  },
+
+  imageWrapper: {
+    padding: 3,
+    backgroundColor: '#ECECD1',
   }
 });
 

@@ -20,6 +20,7 @@ Listening for new events from the server
 
 import WebSocketConnection from './websocket_connection';
 import Event from './event';
+import Channel from './channel';
 
 class WebSocketRails {
 
@@ -139,9 +140,9 @@ class WebSocketRails {
 
   trigger(event_name, data, success_callback, failure_callback) {
     var event, ref;
-    console.log('WebSocketRails trigger event_name:', event_name, 'data:', data);
+    // console.log('WebSocketRails trigger event_name:', event_name, 'data:', data);
     event = new Event([event_name, data, (ref = this._conn) != null ? ref.connection_id : void 0], success_callback, failure_callback);
-    console.log('WebsocketRails trigger event:', event);
+    // console.log('WebsocketRails trigger event:', event);
     return this.trigger_event(event);
   }
 
@@ -158,7 +159,7 @@ class WebSocketRails {
   }
 
   dispatch(event) {
-    console.log('WebSocketRails dispatch event:', event);
+    // console.log('WebSocketRails dispatch event:', event);
     var callback, i, len, ref, results;
     if (this.callbacks[event.name] == null) {
       return;
@@ -173,9 +174,10 @@ class WebSocketRails {
   }
 
   subscribe(channel_name, success_callback, failure_callback) {
+    // console.log('WebSocketRails subscribe:', channel_name);
     var channel;
     if (this.channels[channel_name] == null) {
-      channel = new WebSocketRails.Channel(channel_name, this, false, success_callback, failure_callback);
+      channel = new Channel(channel_name, this, false, success_callback, failure_callback);
       this.channels[channel_name] = channel;
       return channel;
     } else {
@@ -186,7 +188,7 @@ class WebSocketRails {
   subscribe_private(channel_name, success_callback, failure_callback) {
     var channel;
     if (this.channels[channel_name] == null) {
-      channel = new WebSocketRails.Channel(channel_name, this, true, success_callback, failure_callback);
+      channel = new Channel(channel_name, this, true, success_callback, failure_callback);
       this.channels[channel_name] = channel;
       return channel;
     } else {
@@ -203,7 +205,7 @@ class WebSocketRails {
   }
 
   dispatch_channel(event) {
-    console.log('WebSocketRails dispatch_channel event:', event);
+    // console.log('WebSocketRails dispatch_channel event:', event);
     if (this.channels[event.channel] == null) {
       return;
     }
