@@ -27,8 +27,6 @@ class WebSocketRails {
   constructor(url, use_websockets) {
     var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-    // console.log('WebSocketRails constructor this.connection_stale:', this.connection_stale);
-
     this.url = url;
     this.use_websockets = use_websockets != null ? use_websockets : true;
     // this.connection_stale = bind(this.connection_stale, this);
@@ -86,12 +84,10 @@ class WebSocketRails {
   }
 
   new_message(data) {
-    // console.log('WebSocketRails new_message data:', data);
     var event, i, len, ref, results, socket_message;
     results = [];
     for (i = 0, len = data.length; i < len; i++) {
       socket_message = data[i];
-      // console.log('WebSocketRails new_message socket_message:', socket_message);
       event = new Event(socket_message);
       if (event.is_result()) {
         if ((ref = this.queue[event.id]) != null) {
@@ -103,7 +99,6 @@ class WebSocketRails {
       } else if (event.is_ping()) {
         this.pong();
       } else {
-        // console.log('WebSocketRails new_message event:', event);
         this.dispatch(event);
       }
       if (this.state === 'connecting' && event.name === 'client_connected') {
@@ -125,24 +120,18 @@ class WebSocketRails {
   }
 
   bind(event_name, callback) {
-    // console.log('WebSocketRails bind event_name:', event_name);
     var base;
 
-    console.log('WebSocketRails bind this.callbacks:', this.callbacks);
     if ((base = this.callbacks)[event_name] == null) {
-      // console.log('WebSocketRails bind event_name not found in this.callbacks...');
       base[event_name] = [];
     }
     var stack = this.callbacks[event_name].push(callback);
-    // console.log('WebSocketRails bind this.callbacks:', this.callbacks);
     return stack;
   }
 
   trigger(event_name, data, success_callback, failure_callback) {
     var event, ref;
-    // console.log('WebSocketRails trigger event_name:', event_name, 'data:', data);
     event = new Event([event_name, data, (ref = this._conn) != null ? ref.connection_id : void 0], success_callback, failure_callback);
-    // console.log('WebsocketRails trigger event:', event);
     return this.trigger_event(event);
   }
 
@@ -152,14 +141,12 @@ class WebSocketRails {
       base[name1] = event;
     }
     if (this._conn) {
-      console.log('trigger_event event:', event);
       this._conn.trigger(event);
     }
     return event;
   }
 
   dispatch(event) {
-    // console.log('WebSocketRails dispatch event:', event);
     var callback, i, len, ref, results;
     if (this.callbacks[event.name] == null) {
       return;
@@ -174,7 +161,6 @@ class WebSocketRails {
   }
 
   subscribe(channel_name, success_callback, failure_callback) {
-    // console.log('WebSocketRails subscribe:', channel_name);
     var channel;
     if (this.channels[channel_name] == null) {
       channel = new Channel(channel_name, this, false, success_callback, failure_callback);
@@ -205,7 +191,6 @@ class WebSocketRails {
   }
 
   dispatch_channel(event) {
-    // console.log('WebSocketRails dispatch_channel event:', event);
     if (this.channels[event.channel] == null) {
       return;
     }

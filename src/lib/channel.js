@@ -13,7 +13,6 @@ import Event from './event';
 
 class Channel {
   constructor(name, _dispatcher, is_private, on_success, on_failure) {
-    console.log('name:', name, '_dispatcher:', _dispatcher);
     var event, event_name, ref;
     this.name = name;
     this._dispatcher = _dispatcher;

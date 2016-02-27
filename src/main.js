@@ -2,10 +2,12 @@ import React, { Component, StyleSheet, Navigator } from 'react-native';
 
 import Settings from './settings';
 import Controls from './controls';
+import Dvds from './dvds';
 
 var ROUTES = {
   controls: Controls,
-  settings: Settings
+  settings: Settings,
+  dvds: Dvds
 };
 
 

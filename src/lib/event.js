@@ -49,7 +49,6 @@ class Event {
   };
 
   run_callbacks(success, result) {
-    console.log('Event run_callbacks...');
     this.success = success;
     this.result = result;
     if (this.success === true) {

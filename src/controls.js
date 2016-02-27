@@ -24,29 +24,34 @@ class Controls extends Component {
         });
       }
     });
+
+    if (this.props.navigator.dvd) {
+      this.setState({dvd: this.props.navigator.dvd, status: 'pause'});
+    }
   }
 
   findDvd(playing) {
-    var dvd = this.state.dvds.map((dvd, index) => {
-      if (dvd.id == playing.dvd_id) {
-        return dvd;
+    var dvdIdx = this.state.dvds.findIndex((dvd, index) => {
+      if (dvd.id === playing.dvd_id) {
+        return true;
+      } else {
+        return false;
       }
-      return false;
     })
-    return dvd[0];
+    return this.state.dvds[dvdIdx];
   }
 
   listen() {
     this.state.dispatcher.bind('dvds', (dvds) => {
-      // console.log('dispatcher.bind callback...');
-      // console.log('successfully connected... dvds:', dvds);
       this.setState({dvds: dvds});
+      this.props.navigator.dvds = dvds;
     });
 
     this.state.dispatcher.bind('now_playing', (playing) => {
-      console.log('playing:', playing);
+      console.log('now_playing:', playing);
 
       var dvd = this.findDvd(playing);
+      console.log('now_playing dvd:', dvd);
       this.setState({playing: playing, dvd: dvd, status: playing.status});
     });
 
@@ -76,6 +81,10 @@ class Controls extends Component {
 
   settings() {
     this.props.navigator.push({name: 'settings'});
+  }
+
+  dvds() {
+    this.props.navigator.push({name: 'dvds'});
   }
 
   changePlay() {
@@ -119,7 +128,7 @@ class Controls extends Component {
         <Text style={styles.title}>DVD Pila! Remote</Text>
         <View style={styles.dvd}>
           {title}
-          <View style={styles.imageWrapper}>
+          <View style={this.state.dvd ? styles.imageWrapper : styles.noDvd}>
             {dvdImage}
           </View>
         </View>
@@ -133,7 +142,10 @@ class Controls extends Component {
         </View>
 
         <View style={styles.divider} />
-        <Button text={'Settings'} src={require('./img/gear-white-icon.png')} onPress={this.settings.bind(this)} />
+        <View style={styles.row}>
+          <Button buttonStyle={styles.navButton} text={'Settings'} src={require('./img/gear-white-icon.png')} onPress={this.settings.bind(this)} />
+          <Button buttonStyle={styles.navButton} text={'DVDs'} src={require('./img/dvd-icon.png')} onPress={this.dvds.bind(this)} />
+        </View>
       </View>
     );
   }
@@ -170,8 +182,12 @@ const styles = StyleSheet.create({
     padding: 1,
     width: 300,
     borderColor: '#9F4115',
-    marginTop: 55,
+    marginTop: 45,
     marginBottom: 5
+  },
+
+  row: {
+    flexDirection: 'row'
   },
 
   dvd: {
@@ -182,7 +198,8 @@ const styles = StyleSheet.create({
   dvdTitle: {
     fontSize: 22,
     color: '#ECECD1',
-    marginRight: 30
+    marginRight: 30,
+    width: 100
   },
 
   dvdImage: {
@@ -193,6 +210,15 @@ const styles = StyleSheet.create({
   imageWrapper: {
     padding: 3,
     backgroundColor: '#ECECD1',
+  },
+
+  noDvd: {
+    padding: 0
+  },
+
+  navButton: {
+    marginLeft: 15,
+    marginRight: 15
   }
 });
 
