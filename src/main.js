@@ -8,11 +8,6 @@ var ROUTES = {
   settings: Settings
 };
 
-window.navigator.userAgent = "react-native";
-import io from 'socket.io-client/socket.io';
-
-// Setup the socket.
-socket = io.connect('http://192.168.1.22:3000/websocket', {jsonp: false});
 
 class Main extends Component {
   constructor(props) {

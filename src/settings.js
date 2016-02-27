@@ -7,7 +7,7 @@ class Settings extends Component {
     super(props);
     this.props = props;
 
-    this.state = {settings: {url: ''}};
+    this.state = {settings: {host: ''}};
     store.get('settings').then((data) => {
       if (data === null) {
         data = {};
@@ -36,11 +36,11 @@ class Settings extends Component {
           <Text style={styles.title}>Setttings</Text>
 
           <View style={styles.formElement}>
-            <Text style={styles.label}>Server URL:</Text>
+            <Text style={styles.label}>DVD Pila! Host:</Text>
             <TextInput
               style={styles.input}
-              onChangeText={(text) => this.setState({settings: {url: text}})}
-              value={this.state.settings.url ? this.state.settings.url : ''} />
+              onChangeText={(text) => this.setState({settings: {host: text}})}
+              value={this.state.settings.host ? this.state.settings.host : ''} />
           </View>
           <Button text={'Save'} src={require('./img/save-icon.png')}
             onPress={this.save.bind(this)}
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   formElement: {
     backgroundColor: '#ECECD1',
     margin: 5,
-    flexDirection: 'row',
+    flexDirection : 'row',
     padding: 5
   },
 
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   },
 
   backButton: {
-    marginTop: 5,
+    paddingBottom: 0
   },
 
   saveText: {
@@ -114,7 +114,8 @@ const styles = StyleSheet.create({
   },
 
   saveImage: {
-    marginLeft: 40
+    marginLeft: 40,
+    marginTop: 5
   },
 
   row: {
@@ -124,7 +125,7 @@ const styles = StyleSheet.create({
   divider: {
     borderBottomWidth: 1,
     padding: 1,
-    width: 300,
+    width: 400,
     borderColor: '#9F4115',
     marginBottom: 100,
     marginTop: 5
