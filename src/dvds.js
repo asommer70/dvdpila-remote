@@ -28,11 +28,8 @@ class Dvds extends Component {
   }
 
   selectDvd(rowId) {
-    console.log('dvd:', this.props.navigator.dvds[rowId]);
-    // this.props.navigator.dvd = this.props.navigator.dvds[rowId];
     this.state.dispatcher.trigger('new_now', {id: this.props.navigator.dvds[rowId].id, type: 'dvd'});
-
-    this.props.navigator.immediatelyResetRouteStack([{name: 'controls'}]);
+    this.goBack();
   }
 
   render() {

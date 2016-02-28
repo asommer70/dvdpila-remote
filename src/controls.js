@@ -19,15 +19,11 @@ class Controls extends Component {
         var dispatcher = new WebSocketRails(data.host + '/websocket');
 
         this.setState({settings: data, dispatcher: dispatcher}, () => {
-          this.state.dispatcher.trigger('now', {now: 'I want it now!'});
           this.listen();
+          this.state.dispatcher.trigger('now', {now: 'I want it now!'});
         });
       }
     });
-
-    if (this.props.navigator.dvd) {
-      this.setState({dvd: this.props.navigator.dvd, status: 'pause'});
-    }
   }
 
   findDvd(playing) {
@@ -48,34 +44,24 @@ class Controls extends Component {
     });
 
     this.state.dispatcher.bind('now_playing', (playing) => {
-      console.log('now_playing:', playing);
-
       var dvd = this.findDvd(playing);
-      console.log('now_playing dvd:', dvd);
       this.setState({playing: playing, dvd: dvd, status: playing.status});
-    });
-
-    this.state.dispatcher.bind('pause_success', (playing) => {
-      console.log('paused_success from server...');
     });
 
     var channel = this.state.dispatcher.subscribe('browser');
     channel.bind('play_now', (playing) => {
-      console.log('channel bind playing:', playing);
       var dvd = this.findDvd(playing);
       this.setState({playing: playing, dvd: dvd, status: playing.status});
     });
 
     channel.bind('pause_now', (playing) => {
-      console.log('channel bind playing:', playing);
       var dvd = this.findDvd(playing);
       this.setState({playing: playing, dvd: dvd, status: playing.status});
     });
 
-    channel.bind('stop_now', (playing) => {
-      console.log('channel bind playing:', playing);
+    channel.bind('dvd_change', (playing) => {
       var dvd = this.findDvd(playing);
-      this.setState({playing: playing, dvd: dvd, status: playing.status});
+      this.setState({playing: playing, dvd: dvd, status: 'pause'});
     });
   }
 
@@ -108,8 +94,6 @@ class Controls extends Component {
   render() {
     var title, dvdImage, playControl;
     if (this.state.dvd) {
-      console.log('this.state.dvd:', this.state.dvd);
-      // console.log('image_web_url:', 'http://' + this.state.settings.host + this.state.dvd.image_web_url)
       title = <Text style={styles.dvdTitle}>{this.state.dvd.title}</Text>;
       dvdImage = <Image source={{uri: 'http://' + this.state.settings.host + this.state.dvd.image_web_url}} style={styles.dvdImage}/>;
     } else {
